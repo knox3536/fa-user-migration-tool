@@ -14,7 +14,9 @@
     <body>
         <script type="text/javascript" src="../js/main.js"></script>
         <script type="text/javascript" src="../js/functionality.js"></script>
+
         <div style="width: 425px;">
+            <!-- *********** MAIN MENU *********** -->
             <div id="main-menu">
                 <h3 id="welcome">Welcome to the FA User Migration tool!</h3>
                 <a id="not-logged-in" href="https://www.furaffinity.net/login" target="_blank" style="display: none;">
@@ -25,11 +27,13 @@
                     <p style="color: firebrick;"><strong>Check your internet connection, and then click this extension again.</strong></p>
                 </div>
                 <div id="general-overview">
-                    <p id="summary-of-work">Currently, we only support one functionality: importing another user's watchlist.</p>
+                    <p id="summary-of-work">Currently, we only support two functionality: importing another user's watchlist or submissions.</p>
 
-                    <button id="mm-to-watch1" class="main-menu-button" disabled>Import Watchers</button>
+                    <button id="mm-to-watch1" class="main-menu-button" disabled>Import Watchers</button><br />
+                    <button id="mm-to-sub1" class="main-menu-button" disabled>Import Submissions</button>
                 </div>
             </div>
+            <!-- *********** WATCHLIST IMPORT *********** -->
             <div id="watchlist-import-section" style="display: none;">
                 <a id="watch1-to-mm">&larr; Back</a>
                 <h3>Import another user's watch list</h3>
@@ -47,16 +51,43 @@
                 </p>
 
                 <p id="watchlist-import-link-instructions" style="display: none">
-                    <strong>Confirm:</strong><br />You will import <span id="number-of-watchers"></span> watchers from <span id="old-user-confirm"></span> to <span id="new-user-confirm"></span>.<br />
+                    <strong>Confirm:</strong><br />You will import <span id="number-of-watchers"></span> watchers from <span id="old-user-confirm"></span> to <span id="new-user-confirm"></span>.<br /><br />
                     <button type="button" id="watchlist-import-button">Begin!</button>
                 </p>
 
                 <p id="watchlist-import-in-progress" style="display: none">
-                    <strong>Progress:</strong> <span id="watchlist-import-progress">0.00</span>%
+                    <strong>Progress:</strong>
+                    <span id="watchlist-import-count">0</span> of <span id="watchlist-import-total">0</span>
+                    (<span id="watchlist-import-progress">0.00</span>%)
                 </p>
 
                 <p id="watchlist-import-complete" style="display: none">
                     <strong style="color: green;">Done!</strong> You may close this view now!
+                </p>
+            </div>
+
+            <!-- *********** SUBMISSIONS IMPORT *********** -->
+            <div id="submissions-import-section" style="display: none;">
+                <a id="sub1-to-mm">&larr; Back</a>
+                <h3>Import another user's submissions</h3>
+                <p>Use this tool if you're looking to move your submissions from one account to another.
+                   This is only meant to be used if the art was yours to move. By using this tool, you agree not to hold it accountable in a copyright dispute.
+                </p>
+                <p><strong>NOTE!</strong> Please ensure you are logged into the account you are transferring to.</p>
+
+                <p style="margin: 0 1.5em; padding: 0.5em; background-color: lightblue;">
+                    <strong>Account you are transferring from:</strong><br />
+                    <input id="old-user-subs" type="text" style="margin-left: 2px;" minlength="30"></input><br />
+                    <strong>Account you are transferring to:</strong><br />
+                    <input id="curr-user-subs" type="text" style="margin-left: 2px;" minlength="30" disabled></input><br /><br />
+                    <input id="submissions-import-confirm" type="button" value="Next"></input>
+                </p>
+
+                <p id="submissions-import-link-instructions" style="display: none">
+                    <strong>Confirm:</strong><br />You will import <span id="number-of-subs"></span> submissions 
+                    from <span id="old-user-subs-confirm"></span> to <span id="new-user-subs-confirm"></span>.<br />
+                    <strong style="color: darkgreen;">You will be able to review and edit each submission before upload.</strong><br /><br />
+                    <button type="button" id="watchlist-import-button">Begin!</button>
                 </p>
             </div>
         </div>

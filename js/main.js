@@ -27,7 +27,7 @@ nav._fetch = function(url, action, callback) {
 nav._elem = function(id) { return document.getElementById(id); };
 
 
-// Handlers
+// Handlers for watchlist
 nav.main_watchlistImport = function() { 
     nav._toggle(["main-menu", "watchlist-import-section"]);
     nav._elem("curr-user").value = urlUsername;
@@ -52,15 +52,43 @@ nav.watchlistConfirmButton = function() {
         if (curr !== total) {
             var percent = (curr / total * 100).toFixed(2);
             nav._elem("watchlist-import-progress").innerText = percent;
+            nav._elem("watchlist-import-count").innerText = curr;
         }
         else {
             nav._toggle("watchlist-import-complete", true);
             nav._toggle('watchlist-import-in-progress', false);
         }
     };
+    nav._elem("watchlist-import-total").innerText = total;
+    nav._elem('old-user').disabled = true;
+    nav._elem('watchlist-import-confirm').disabled = true;
     nav._toggle('watchlist-import-in-progress', true);
     nav._toggle('watchlist-import-link-instructions', false);
     viewUserPage(0, updateProgress);
+};
+
+nav.main_submissionsImport = function() {
+    nav._toggle(["main-menu", "submissions-import-section"]);
+    nav._elem("curr-user-subs").value = urlUsername;
+};
+
+nav.submissionsGetSubmissionLinks = function() {
+    var user = nav._elem("old-user-subs").value;
+    if (!user || !user.length) return;
+
+    var button = nav._elem("submissions-import-confirm")
+    button.value = "Please wait...";
+    button.disabled = true;
+
+    collectSubmissions(user, "gallery").then(function(subs) {
+        nav._toggle("submissions-import-link-instructions", true);
+        nav._elem("number-of-subs").innerText = subs.length;
+        nav._elem("old-user-subs-confirm").innerText = user;
+        nav._elem("new-user-subs-confirm").innerText = urlUsername;
+
+        button.value = "Make change";
+        button.disabled = false;
+    });
 };
 
 
@@ -73,7 +101,10 @@ nav.watchlistConfirmButton = function() {
             "mm-to-watch1": ["click", nav.main_watchlistImport],
             "watch1-to-mm": ["click", nav.main_watchlistImport],
             "watchlist-import-confirm": ["click", nav.watchlistGetWatchLink],
-            "watchlist-import-button": ["click", nav.watchlistConfirmButton]
+            "watchlist-import-button": ["click", nav.watchlistConfirmButton],
+            "mm-to-sub1": ["click", nav.main_submissionsImport], 
+            "sub1-to-mm": ["click", nav.main_submissionsImport],
+            "submissions-import-confirm": ["click", nav.submissionsGetSubmissionLinks]
         };
 
         Object.keys(handlers).forEach(function(id) {
