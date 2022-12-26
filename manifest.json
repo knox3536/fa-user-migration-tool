@@ -1,0 +1,22 @@
+{
+  "manifest_version": 2,
+
+  "name": "FA User Migration Tool",
+  "description": "Tools to help migrate a user from one username to another on FA",
+  "version": "0.1",
+
+  "page_action": {
+    "default_icon": "icon.png",
+    "default_popup": "html/main.html",
+    "default_title": "FA Migration Tools"
+  },
+  "background": {
+    "scripts": ["js/bootstrap.js"],
+    "persistent": false
+  },
+  "permissions": [
+    "activeTab",
+    "declarativeContent",
+    "*://*.furaffinity.net/"
+  ]
+}
