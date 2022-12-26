@@ -11,8 +11,7 @@
     "default_title": "FA Migration Tools"
   },
   "background": {
-    "scripts": ["js/bootstrap.js"],
-    "persistent": false
+    "scripts": ["js/bootstrap.js"]
   },
   "permissions": [
     "activeTab",

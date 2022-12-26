@@ -27,7 +27,7 @@
                 <div id="general-overview">
                     <p id="summary-of-work">Currently, we only support one functionality: importing another user's watchlist.</p>
 
-                    <button id="mm-to-watch1">Import Watchers</button>
+                    <button id="mm-to-watch1" class="main-menu-button" disabled>Import Watchers</button>
                 </div>
             </div>
             <div id="watchlist-import-section" style="display: none;">
@@ -47,8 +47,16 @@
                 </p>
 
                 <p id="watchlist-import-link-instructions" style="display: none">
-                    <strong>Confirm:</strong> you will import <span id="number-of-watchers"></span> watchers from <span id="old-user-confirm"></span> to <span id="new-user-confirm"></span>.<br />
-                    <button type="button" id="watchlist-import-button">Begin!</a>
+                    <strong>Confirm:</strong><br />You will import <span id="number-of-watchers"></span> watchers from <span id="old-user-confirm"></span> to <span id="new-user-confirm"></span>.<br />
+                    <button type="button" id="watchlist-import-button">Begin!</button>
+                </p>
+
+                <p id="watchlist-import-in-progress" style="display: none">
+                    <strong>Progress:</strong> <span id="watchlist-import-progress">0.00</span>%
+                </p>
+
+                <p id="watchlist-import-complete" style="display: none">
+                    <strong style="color: green;">Done!</strong> You may close this view now!
                 </p>
             </div>
         </div>

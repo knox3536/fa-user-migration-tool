@@ -15,14 +15,12 @@ function scrapeWatchList(doc) {
 function getWatchPagePromise(url, parser) {
     return new Promise(function(resolve, reject) {
         nav._fetch(url, 'GET', function(xhr) {
-            if (xhr.readyState === 4) { 
-                if (xhr.status === 200) {
-                    var doc = parser.parseFromString(xhr.responseText, "text/html");
-                    var scrape = scrapeWatchList(doc);
-                    resolve([scrape, !!scrape.length]);
-                }
-                else reject(xhr.status);
+            if (xhr.status === 200) {
+                var doc = parser.parseFromString(xhr.responseText, "text/html");
+                var scrape = scrapeWatchList(doc);
+                resolve([scrape, !!scrape.length]);
             }
+            else reject(xhr.status);
         });
     });
 }
@@ -49,5 +47,24 @@ function collectWatches(user) {
             });
         }
         getWatchPages();
-    })
+    });
+}
+
+function viewUserPage(currUser, trackFunc) {
+    var url = 'www.furaffinity.net/user/' + watchList[currUser] + '/';
+    nav._fetch(url, 'GET', function(xhr) {
+        if (xhr.status === 200) {
+            var id = xhr.responseText.match(/key=([0-9a-f]*)/)[0];
+            followUser(currUser, id, trackFunc);
+        }
+    });
+}
+function followUser(currUser, id, trackFunc) {
+    var url = 'www.furaffinity.net/watch/' + watchList[currUser] + '/?' + id;
+    nav._fetch(url, 'GET', function(xhr) {
+        if (xhr.status === 200) {
+            trackFunc(currUser++)
+            if (currUser !== watchList.length) viewUserPage(currUser, trackFunc);
+        }
+    });
 }
