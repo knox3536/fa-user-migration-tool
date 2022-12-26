@@ -191,26 +191,34 @@ function collectFavorites(user, section) {
     });
 }
 
-function viewImage(currFav, trackFunc) {
+function viewImage(currFav, trackFunc, retry) {
     var faves = favoriteList || currFaves;
     if (currFav >= 0) {
         var url = 'www.furaffinity.net/view/' + faves[currFav] + '/';
         nav._fetch(url, 'GET', function(xhr) {
             if (xhr.status === 200) {
-                var id = xhr.responseText.match(/key=([0-9a-f]*)/)[0];
-                faveImage(currFav, id, trackFunc);
+                var matches = xhr.responseText.match(/key=([0-9a-f]*)/);
+                if (matches) { 
+                    var id = matches[0];
+                    faveImage(currFav, id, trackFunc);
+                }
+                else viewImage(--currFav, trackFunc);
             }
+            else if (!retry) viewImage(currFav, trackFunc, true);
+            else viewImage(--currFav, trackFunc);
         });
     }
 }
-function faveImage(currFav, id, trackFunc) {
+function faveImage(currFav, id, trackFunc, retry) {
     var faves = favoriteList || currFaves;
     if (faves[currFav] !== undefined) {
         var url = 'www.furaffinity.net/fav/' + faves[currFav] + '/?' + id;
         nav._fetch(url, 'GET', function(xhr) {
-            if (xhr.status === 200) {
-                trackFunc(currFav--)
-                if (currFav !== faves.length) viewImage(currFav, trackFunc);
+            if (xhr.status === 200) trackFunc(currFav);
+            else if (!retry) faveImage(currFav, id, trackFunc, true);
+
+            if (--currFav >= 0) {
+                viewImage(currFav, trackFunc);
             }
         });
     }
