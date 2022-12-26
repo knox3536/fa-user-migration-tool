@@ -115,11 +115,11 @@ function collectSubmissions(user, section) {
             return "www.furaffinity.net/" + section + "/" + user + "/" + pageID++ + "?perpage=72"; 
         }
 
-        var getWatchPages = function() {
+        var getSubmissionPages = function() {
             getGalleryPromise(url(), parser).then(function(result) {
                 if (result[1]) {
                     subs = subs.concat(result[0]);
-                    getWatchPages();
+                    getSubmissionPages();
                 }
                 else resolve(subs);
 
@@ -127,6 +127,91 @@ function collectSubmissions(user, section) {
                 reject(status);
             });
         };
-        getWatchPages();
+        getSubmissionPages();
     });
+}
+
+
+
+
+
+// Favorites
+function scrapeFavorites(doc) {
+    var result = [];
+    var gallery = doc.getElementById("gallery-favorites");
+    if (gallery) {
+        var scrape = gallery.getElementsByTagName("figure");
+
+        if (scrape.length) {
+            for (var i = 0; i < scrape.length; i++) {
+                var f = scrape[i].attributes.id.nodeValue.split('-');
+                result.push(f[1]);
+            };
+        }
+    }
+    return result;
+}
+
+function getFavoritesGalleryPromise(url, parser) {
+    return new Promise(function(resolve, reject) {
+        nav._fetch(url, 'GET', function(xhr) {
+            if (xhr.status === 200) {
+                var doc = parser.parseFromString(xhr.responseText, "text/html");
+                var scrape = scrapeFavorites(doc);
+                resolve([scrape, !!scrape.length]);
+            }
+            else reject(xhr.status);
+        });
+    });
+}
+
+function collectFavorites(user, section) {
+    return new Promise(function(resolve, reject) {
+        var more = false;
+        var favs = [];
+        var parser = new DOMParser();
+        var pageID = 1;
+        var url = function() { 
+            return "www.furaffinity.net/" + section + "/" + user + "/" + pageID++;  
+        }
+
+        var getFavoritesPages = function() {
+            getFavoritesGalleryPromise(url(), parser).then(function(result) {
+                if (result[1]) {
+                    favs = favs.concat(result[0]);
+                    getFavoritesPages();
+                }
+                else resolve(favs);
+
+            }, function(status) {
+                reject(status);
+            });
+        };
+        getFavoritesPages();
+    });
+}
+
+function viewImage(currFav, trackFunc) {
+    var faves = favoriteList || currFaves;
+    if (currFav >= 0) {
+        var url = 'www.furaffinity.net/view/' + faves[currFav] + '/';
+        nav._fetch(url, 'GET', function(xhr) {
+            if (xhr.status === 200) {
+                var id = xhr.responseText.match(/key=([0-9a-f]*)/)[0];
+                faveImage(currFav, id, trackFunc);
+            }
+        });
+    }
+}
+function faveImage(currFav, id, trackFunc) {
+    var faves = favoriteList || currFaves;
+    if (faves[currFav] !== undefined) {
+        var url = 'www.furaffinity.net/fav/' + faves[currFav] + '/?' + id;
+        nav._fetch(url, 'GET', function(xhr) {
+            if (xhr.status === 200) {
+                trackFunc(currFav--)
+                if (currFav !== faves.length) viewImage(currFav, trackFunc);
+            }
+        });
+    }
 }

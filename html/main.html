@@ -30,7 +30,8 @@
                     <p id="summary-of-work">Currently, we only support two functionality: importing another user's watchlist or submissions.</p>
 
                     <button id="mm-to-watch1" class="main-menu-button" disabled>Import Watchers</button><br />
-                    <button id="mm-to-sub1" class="main-menu-button" disabled>Import Submissions</button>
+                    <button id="mm-to-sub1" class="main-menu-button" disabled>Import Submissions</button><br />
+                    <button id="mm-to-fav1" class="main-menu-button" disabled>Import Favorites</button>
                 </div>
             </div>
             <!-- *********** WATCHLIST IMPORT *********** -->
@@ -87,7 +88,53 @@
                     <strong>Confirm:</strong><br />You will import <span id="number-of-subs"></span> submissions 
                     from <span id="old-user-subs-confirm"></span> to <span id="new-user-subs-confirm"></span>.<br />
                     <strong style="color: darkgreen;">You will be able to review and edit each submission before upload.</strong><br /><br />
-                    <button type="button" id="watchlist-import-button">Begin!</button>
+                    <button type="button" id="submissions-import-button">Begin!</button>
+                </p>
+            </div>
+
+            <!-- *********** FAVORITES IMPORT *********** -->
+            <div id="favorites-import-section" style="display: none;">
+                <a id="fav1-to-mm">&larr; Back</a>
+                <h3>Import another user's submissions</h3>
+                <p>Use this tool if you're looking to move your favorites from one account to another.</p>
+                <p><strong>NOTE!</strong> Please ensure you are logged into the account you are transferring to.</p>
+
+                <p style="margin: 0 1.5em; padding: 0.5em; background-color: lightgreen;">
+                    <strong>Account you are transferring from:</strong><br />
+                    <input id="old-user-favs" type="text" style="margin-left: 2px;" minlength="30"></input><br />
+                    <strong>Account you are transferring to:</strong><br />
+                    <input id="curr-user-favs" type="text" style="margin-left: 2px;" minlength="30" disabled></input><br /><br />
+                    <input id="favorites-import-form-confirm" type="button" value="Next"></input>
+                </p>
+
+                <p id="favorites-save-new-faves" style="display: none;">
+                    <strong>Do you have any favorites on <span id="ask-new-faves-user"></span>?</strong><br />
+                    We can insert your old account's favorites chronologically, before your new ones.<br /><br />
+                    <strong>NOTE:</strong> This involves removing the favorites from your account.
+                    If you close this extension window, you will permanently lose those favorites.<br />
+                    <input id="favorites-save-new-faves-confirm" type="button" value="Re-order favorites"></input><br /><br />
+                    <p id="new-faves-complete" style="display: none;">
+                        <strong style="color: green">Done!</strong><br />
+                        It is still important that you do NOT close this window, or you will lose your new favorites.
+                    </p>
+                </p>
+
+                <input id="favorites-import-confirm" type="button" style="display: none;" value="Continue"></input>
+
+                <p id="favorites-import-link-instructions" style="display: none">
+                    <strong>Confirm:</strong><br />You will import <span id="number-of-favs"></span> favorites 
+                    from <span id="old-user-favs-confirm"></span> to <span id="new-user-favs-confirm"></span>.<br />
+                    <button type="button" id="favorites-import-button">Begin!</button>
+                </p>
+
+                <p id="favorites-import-in-progress" style="display: none">
+                    <strong>Progress:</strong>
+                    <span id="favorites-import-count">0</span> of <span id="favorites-import-total">0</span>
+                    (<span id="favorites-import-progress">0.00</span>%)
+                </p>
+
+                <p id="favorites-import-complete" style="display: none">
+                    <strong style="color: green;">Done!</strong> You may close this view now!
                 </p>
             </div>
         </div>

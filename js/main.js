@@ -1,7 +1,7 @@
 'use strict';
 
 var tab, scheme, readableUsername, urlUsername, beta;
-var watchList;
+var watchList, favoriteList, currFaves = [];
 var nav = {};
 
 // Utilities
@@ -91,6 +91,86 @@ nav.submissionsGetSubmissionLinks = function() {
     });
 };
 
+nav.main_favoritesImport = function() {
+    nav._toggle(["main-menu", "favorites-import-section"]);
+    nav._elem("curr-user-favs").value = urlUsername;
+};
+
+nav.askAboutNewFaves = function() {
+    nav._toggle("favorites-save-new-faves");
+    nav._toggle("favorites-import-confirm");
+    nav._elem("ask-new-faves-user").innerText = nav._elem("curr-user-favs").value;
+    nav._toggle("favorites-import-form-confirm");
+};
+
+nav.saveNewFavoritesButton = function() {
+    var user = nav._elem("curr-user-favs").value;
+    if (!user || !user.length) return;
+
+    var button = nav._elem("favorites-save-new-faves-confirm");
+    button.value = "Please wait...";
+    button.disabled = true;
+    nav._elem("favorites-import-confirm").disabled = true;
+
+    collectFavorites(user, "favorites").then(function(favs) {
+        currFaves = favs;
+
+        viewImage(currFaves.length - 1, function(curr) {
+            if (curr === 0) {
+                nav._toggle("new-faves-complete", true);
+                nav._elem("favorites-save-new-faves-confirm").value = "Done!";
+                nav._elem("favorites-import-confirm").disabled = false;
+            }
+        });
+    });
+};
+
+nav.favoritesGetFavoriteLinks = function() {
+    var user = nav._elem("old-user-favs").value;
+    if (!user || !user.length) return;
+
+    var button = nav._elem("favorites-import-confirm");
+    button.value = "Please wait...";
+    button.disabled = true;
+
+    nav._toggle("favorites-save-new-faves", false);
+    nav._toggle("new-faves-complete", false);
+
+    collectFavorites(user, "favorites").then(function(favs) {
+        favoriteList = currFaves.concat(favs);
+
+        nav._toggle("favorites-import-link-instructions", true);
+        nav._elem("number-of-favs").innerText = favoriteList.length;
+        nav._elem("old-user-favs-confirm").innerText = user;
+        nav._elem("new-user-favs-confirm").innerText = urlUsername;
+
+        button.value = "Make change";
+        button.disabled = false;
+    });
+};
+
+nav.favoritesConfirmButton = function() {
+    var total = favoriteList.length;
+    var updateProgress = function(curr) {
+        if (curr !== 0) {
+            var current = favoriteList.length - curr;
+            var percent = (current / total * 100).toFixed(2);
+            nav._elem("favorites-import-progress").innerText = percent;
+            nav._elem("favorites-import-count").innerText = current;
+        }
+        else {
+            nav._toggle("favorites-import-complete", true);
+            nav._toggle('favorites-import-in-progress', false);
+        }
+    };
+    nav._elem("favorites-import-total").innerText = total;
+    nav._elem('old-user').disabled = true;
+    nav._elem('favorites-import-confirm').disabled = true;
+    nav._toggle('favorites-import-in-progress', true);
+    nav._toggle('favorites-import-link-instructions', false);
+    viewImage(favoriteList.length - 1, updateProgress);
+};
+
 
 
 
@@ -104,7 +184,13 @@ nav.submissionsGetSubmissionLinks = function() {
             "watchlist-import-button": ["click", nav.watchlistConfirmButton],
             "mm-to-sub1": ["click", nav.main_submissionsImport], 
             "sub1-to-mm": ["click", nav.main_submissionsImport],
-            "submissions-import-confirm": ["click", nav.submissionsGetSubmissionLinks]
+            "submissions-import-confirm": ["click", nav.submissionsGetSubmissionLinks],
+            "mm-to-fav1": ["click", nav.main_favoritesImport], 
+            "fav1-to-mm": ["click", nav.main_favoritesImport],
+            "favorites-import-form-confirm": ["click", nav.askAboutNewFaves],
+            "favorites-save-new-faves-confirm": ["click", nav.saveNewFavoritesButton],
+            "favorites-import-confirm": ["click", nav.favoritesGetFavoriteLinks],
+            "favorites-import-button": ["click", nav.favoritesConfirmButton]
         };
 
         Object.keys(handlers).forEach(function(id) {
