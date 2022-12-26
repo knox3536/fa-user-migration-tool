@@ -1,15 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
+        <style>
+            a, a:hover {
+                font-weight: bold;
+                color: blue;
+                cursor: pointer;
+                text-decoration: none;
+            }
+        </style>
     </head>
     
     <body>
+        <script type="text/javascript" src="../js/main.js"></script>
         <script type="text/javascript" src="../js/functionality.js"></script>
-        <div style="width: 400px;">
-            <h3>Welcome to the FA User Migration tool!</h3>
-            <a id="not-logged-in" href="https://www.furaffinity.net/login" target="_blank" style="display: none;"><h2 style="color: darkred;">Please log into FA to begin.</h2></a>
-            <h2 id="no-internet" style="color: darkred; display: none;">Could not connect to FA.</h2></a>
-            <p id="summary-of-work">Currently, we only support one functionality: importing another user's watchlist.</p>
+        <div style="width: 425px;">
+            <div id="main-menu">
+                <h3 id="welcome">Welcome to the FA User Migration tool!</h3>
+                <a id="not-logged-in" href="https://www.furaffinity.net/login" target="_blank" style="display: none;">
+                    <h2 style="color: darkred;">Please log into FA to begin.</h2>
+                </a>
+                <div id="no-internet" style="display: none;">
+                    <h2 style="color: darkred;">Could not connect to FA.</h2>
+                    <p style="color: firebrick;"><strong>Check your internet connection, and then click this extension again.</strong></p>
+                </div>
+                <div id="general-overview">
+                    <p id="summary-of-work">Currently, we only support one functionality: importing another user's watchlist.</p>
+
+                    <button id="mm-to-watch1">Import Watchers</button>
+                </div>
+            </div>
+            <div id="watchlist-import-section" style="display: none;">
+                <a id="watch1-to-mm">&larr; Back</a>
+                <h3>Import another user's watch list</h3>
+
+                <p>If you're looking to change your account's username, you might be discouraged by how much work it would take to move your watch list. 
+                   With this tool, you can automate the process of regaining your watches without the hassle.</p>
+                <p><strong>NOTE!</strong> Please ensure you are logged into the account you are transferring to.</p>
+
+                <p style="margin: 0 1.5em; padding: 0.5em; background-color: bisque;">
+                    <strong>Account you are transferring from:</strong><br />
+                    <input id="old-user" type="text" style="margin-left: 2px;" minlength="30"></input><br />
+                    <strong>Account you are transferring to:</strong><br />
+                    <input id="curr-user" type="text" style="margin-left: 2px;" minlength="30" disabled></input><br /><br />
+                    <input id="watchlist-import-confirm" type="button" value="Next"></input>
+                </p>
+
+                <p id="watchlist-import-link-instructions" style="display: none">
+                    <strong>Confirm:</strong> you will import <span id="number-of-watchers"></span> watchers from <span id="old-user-confirm"></span> to <span id="new-user-confirm"></span>.<br />
+                    <button type="button" id="watchlist-import-button">Begin!</a>
+                </p>
+            </div>
         </div>
     </body>
 </html>

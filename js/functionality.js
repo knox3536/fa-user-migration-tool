@@ -1,34 +1,53 @@
-'use strict';
+function scrapeWatchList(doc) {
+    var result = [];
+    var scrape = doc.getElementsByTagName("a");
 
-var tab, scheme;
-chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-
-    tab = tabs[0];
-    scheme = tab.url.split('//')[0];
-
-    function testLoginPromise(resolve, reject) {
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', scheme + '//www.furaffinity.net/advertising', true);
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === 4) {
-                if (xhr.status === 200)
-                    if (xhr.responseText.search('Log in</a>') === -1)
-                        resolve();
-                reject(xhr.status);
-            }
+    for (var i = 0; i < scrape.length; i++) {
+        if (scrape.item(i).target === "_blank") {
+            var f = scrape[i].href.split('/');
+            result.push(f[f.length - 2]);
         }
-        xhr.send();
-    }
+    };
 
+    return result;
+}
 
+function getWatchPagePromise(url, parser) {
+    return new Promise(function(resolve, reject) {
+        nav._fetch(url, 'GET', function(xhr) {
+            if (xhr.readyState === 4) { 
+                if (xhr.status === 200) {
+                    var doc = parser.parseFromString(xhr.responseText, "text/html");
+                    var scrape = scrapeWatchList(doc);
+                    resolve([scrape, !!scrape.length]);
+                }
+                else reject(xhr.status);
+            }
+        });
+    });
+}
 
+function collectWatches(user) {
+    return new Promise(function(resolve, reject) {
+        var more = false;
+        var watchers = [];
+        var parser = new DOMParser();
+        var pageID = 1;
+        var url = function() { return "www.furaffinity.net/watchlist/by/" + user + "/" + pageID++; }
 
-    var loggedIn = false;
-    new Promise(testLoginPromise).then(function() {
-        
-    }, function(status) {
-        var id = status === 200 ? 'not-logged-in' : 'no-internet';
-        document.getElementById(id).style.display = "block";
+        var getWatchPages = function() {
+            getWatchPagePromise(url(), parser).then(function(result) {
+                if (result[1]) {
+                    watchers = watchers.concat(result[0]);
+                    if (result[0].length === 200) getWatchPages();
+                    else resolve(watchers);
+                }
+                else resolve(watchers);
+
+            }, function(status) {
+                reject(status);
+            });
+        }
+        getWatchPages();
     })
-
-});
+}
